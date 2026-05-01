@@ -1,0 +1,14 @@
+[
+  {
+    "model": "Naive Bayes",
+    "val_accuracy": 0.52,
+    "test_accuracy": 0.0
+  },
+  {
+    "model": "SVM",
+    "C": 0.1,
+    "kernel": "rbf",
+    "val_accuracy": 0.52,
+    "test_accuracy": 0.386667
+  }
+]
