@@ -64,9 +64,10 @@ data = fetch_20newsgroups(
     random_state=42
 )
 ```
-Les 15 termes les plus discriminants du corpus (score IDF élevé = terme rare = plus informatif) :
 
-![Top TF-IDF features](outputs/figures/tfidf_top_features.png)
+Les 10 termes ayant le plus d'impact selon le modèle Naïve Bayes par classe : 
+
+![Top TF-IDF features](outputs/figures/nb_top_features.png)
 ---
 
 ## Méthodologie
@@ -132,7 +133,7 @@ ml-text-classification-sklearn/
 │       └── README.md             ← sources et description des données
 │
 └── outputs/
-    ├── figures/                  ← confusion_matrix_svm.png · tfidf_top_features.png · mlp_heatmap_lr_l2.png · model_comparison.png
+    ├── figures/                  ← confusion_matrix_svm.png · nb_top_features.png · mlp_heatmap_lr_l2.png · model_comparison.png
     └── metrics.json              ← résultats des 3 modèles (val + test)
 ```
 

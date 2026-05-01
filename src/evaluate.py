@@ -59,30 +59,37 @@ def plot_confusion_matrix(model, X_test, y_test, model_name="SVM", save=True):
     plt.close()
 
 
-def plot_top_tfidf_features(vectorizer, n=15, save=True):
+def plot_top_nb_features(nb_model, vectorizer, n=10, save=True):
     """
-    Barres horizontales des n termes TF-IDF les plus discriminants
-    pour chaque classe, extraits depuis le vocabulaire du vectorizer.
-    Utile pour comprendre ce que le modèle a appris.
+    Top n termes les plus impactants selon Naïve Bayes, par classe.
+    Utilise les log-probabilités conditionnelles du modèle NB :
+    un score élevé indique que le terme est fortement associé à cette classe.
+    Deux sous-graphes côte à côte : baseball (gauche) et hockey (droite).
     """
     feature_names = np.array(vectorizer.get_feature_names_out())
-    # Les indices triés par idf décroissant (termes les plus rares = plus discriminants)
-    idf_scores = vectorizer.idf_
-    top_idx = np.argsort(idf_scores)[::-1][:n]
-    top_terms = feature_names[top_idx]
-    top_scores = idf_scores[top_idx]
+    # nb_model.feature_log_prob_ : shape (n_classes, n_features)
+    log_probs = nb_model.feature_log_prob_
 
-    fig, ax = plt.subplots(figsize=(7, 5))
-    bars = ax.barh(top_terms[::-1], top_scores[::-1], color="#4C72B0")
-    ax.set_xlabel("IDF score (higher = rarer = more discriminating)")
-    ax.set_title(f"Top {n} most discriminating TF-IDF terms")
-    ax.bar_label(bars, fmt="%.2f", padding=3, fontsize=8)
+    fig, axes = plt.subplots(1, 2, figsize=(7, 3))
+    colors = ["#4C72B0", "#DD8452"]
+
+    for i, (label, color) in enumerate(zip(CATEGORIES, colors)):
+        top_idx = np.argsort(log_probs[i])[-n:]
+        top_terms = feature_names[top_idx]
+        top_scores = log_probs[i][top_idx]
+
+        axes[i].barh(top_terms, top_scores, color=color)
+        axes[i].set_title(f"Top {n} — {label}", fontsize=10)
+        axes[i].set_xlabel("Log-probability", fontsize=8)
+        axes[i].tick_params(labelsize=8)
+
+    fig.suptitle("Naïve Bayes — most impactful terms per class", fontsize=11)
     fig.tight_layout()
 
     if save:
         FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-        fig.savefig(FIGURES_DIR / "tfidf_top_features.png", dpi=150)
-        print(f"Saved: {FIGURES_DIR / 'tfidf_top_features.png'}")
+        fig.savefig(FIGURES_DIR / "nb_top_features.png", dpi=150)
+        print(f"Saved: {FIGURES_DIR / 'nb_top_features.png'}")
     plt.close()
 
 
@@ -111,7 +118,7 @@ def plot_mlp_sensitivity(X_train, y_train, X_val, y_val, save=True):
             model.fit(X_train, y_train)
             val_accs[i, j] = accuracy_score(y_val, model.predict(X_val))
 
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(5, 3.5))
     sns.heatmap(
         val_accs,
         annot=True,

@@ -13,7 +13,7 @@ from src.models import train_naive_bayes, train_svm, train_mlp
 from src.evaluate import (
     evaluate_on_test,
     plot_confusion_matrix,
-    plot_top_tfidf_features,
+    plot_top_nb_features,
     plot_mlp_sensitivity,
     plot_model_comparison,
     save_metrics,
@@ -51,7 +51,7 @@ def main():
 
     print("\nGenerating figures...")
     plot_confusion_matrix(svm_model, X_test, y_test, model_name="SVM")
-    plot_top_tfidf_features(vectorizer)
+    plot_top_nb_features(nb_model, vectorizer)
     plot_mlp_sensitivity(X_train, y_train, X_val, y_val)
     plot_model_comparison(summaries, test_accuracies)
     save_metrics(summaries, test_accuracies)
