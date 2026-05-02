@@ -5,7 +5,7 @@ Chaque fonction retourne le meilleur modèle et un résumé de ses paramètres.
 """
 
 import numpy as np
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import ComplementNB
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
@@ -17,10 +17,10 @@ from sklearn.metrics import accuracy_score
 
 def train_naive_bayes(X_train, y_train, X_val, y_val):
     """
-    Entraîne un Naïve Bayes multinomial.
+    Entraîne un ComplementNB — adapté aux représentations TF-IDF.
     Pas de sélection d'hyperparamètres — sert de baseline.
     """
-    model = MultinomialNB()
+    model = ComplementNB()
     model.fit(X_train, y_train)
     val_acc = accuracy_score(y_val, model.predict(X_val))
     summary = {"model": "Naive Bayes", "val_accuracy": round(val_acc, 6)}
@@ -94,7 +94,6 @@ def train_mlp(X_train, y_train, X_val, y_val):
                         learning_rate_init=lr,
                         early_stopping=True,
                         random_state=12345,
-                        max_iter=500,
                     )
                     model.fit(X_train, y_train)
                     val_acc = accuracy_score(y_val, model.predict(X_val))
